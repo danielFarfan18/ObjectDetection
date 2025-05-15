@@ -117,7 +117,7 @@ If you use this code in your research, please cite it as:
 @software{daniel2025multimodel,
   author = {Farfán, Daniel},
   title = {Multi-Model Object Detection},
-  year = {2024},
+  year = {2025},
   publisher = {GitHub},
   url = {https://github.com/danielFarfan18/ObjectDetection}
 }
