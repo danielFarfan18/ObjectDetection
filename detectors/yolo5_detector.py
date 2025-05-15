@@ -12,7 +12,7 @@ class YOLO5Detector:
         classes (list): List of class names for detection
     """
 
-    def __init__(self, model_dir="dnn_model"):
+    def __init__(self, model_dir="models"):
         """
         Initialize the YOLO5 detector.
 
