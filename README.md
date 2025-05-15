@@ -43,7 +43,7 @@ python -m venv ObjectDetector
 source ObjectDetector/bin/activate 
 ```
    <br>
->With conda
+> With conda
 
 ```bash
 conda create -n ObjectDetector python=3.10
