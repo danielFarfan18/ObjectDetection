@@ -36,7 +36,7 @@ cd ObjectDetection
 ```
 
 2. Create a virtual environment (optional but recommended):
-   \nWith venv
+   <br>With venv
 ```bash
 python -m venv ObjectDetector
 source ObjectDetector/bin/activate 
