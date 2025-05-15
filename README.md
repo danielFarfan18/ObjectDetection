@@ -24,7 +24,6 @@ This project implements real-time object detection using multiple deep learning 
 opencv-contrib-python==4.6.0.66
 opencv-python==4.6.0.66
 numpy==1.26.4
-requests  # for downloading model files
 ```
 
 ## Installation
@@ -121,7 +120,7 @@ python main.py --detector yolo5 --source realsense --output depth_detection.mp4
 Note: When using RealSense camera, make sure you have the RealSense SDK installed:
 
 ```bash
-sudo apt-get install python3-pyrealsense2
+pip install pyrealsense2
 ```
 
 The script will display the detection results in real-time and save the processed video to the specified output file.
