@@ -100,7 +100,6 @@ The required model files will be automatically downloaded on first run. They wil
 ## Notes
 
 - Make sure you have enough disk space for the model files
-- The first run might take longer due to model downloads
 - CUDA acceleration is enabled by default if available (for YOLOv5)
 
 ## Citation
