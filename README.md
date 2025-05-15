@@ -36,11 +36,15 @@ cd ObjectDetection
 ```
 
 2. Create a virtual environment (optional but recommended):
+   With venv
 ```bash
 python -m venv ObjectDetector
 source ObjectDetector/bin/activate 
 ```
-
+  With Conda
+  ```bash
+conda create -n ObjectDetector python=3.10
+```
 3. Install dependencies:
 ```bash
 pip install -r requirements.txt
