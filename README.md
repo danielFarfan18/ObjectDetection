@@ -72,11 +72,11 @@ pip install -r requirements.txt
 
 The script supports multiple video sources and detectors using command line arguments:
 
-### Video Sources
+> Video Sources
 
 ```bash
 # Process video file
-python main.py --source path/to/video.mp4
+python main.py --source test_video.mp4
 
 # Use webcam (index 0)
 python main.py --source 0
@@ -85,31 +85,31 @@ python main.py --source 0
 python main.py --source realsense
 ```
 
-### Detectors
+> Detectors
 
 ```bash
 # Using YOLOv4 (default)
-python main.py --detector yolo4 --source video.mp4
+python main.py --detector yolo4 --source test_video.mp4
 
 # Using YOLOv5
-python main.py --detector yolo5 --source video.mp4
+python main.py --detector yolo5 --source test_video.mp4
 
 # Using MobileNet
-python main.py --detector mobilenet --source video.mp4
+python main.py --detector mobilenet --source test_video.mp4
 ```
 
-### Output Options
+> Output Options
 
 ```bash
 # Save to specific output file
-python main.py --detector yolo4 --source input.mp4 --output result.mp4
+python main.py --detector yolo4 --source test_video.mp4 --output result.mp4
 ```
 
-### Full Examples
+> Full Examples
 
 ```bash
-# Process video file with YOLOv4
-python main.py --detector yolo4 --source video.mp4 --output result.mp4
+# Process test video with YOLOv4
+python main.py --detector yolo4 --source test_video.mp4 --output test_detection.mp4
 
 # Use webcam with MobileNet
 python main.py --detector mobilenet --source 0 --output webcam_detection.mp4
@@ -129,7 +129,7 @@ The script will display the detection results in real-time and save the processe
 ### Command Line Arguments
 
 - `--detector`: Choose the detection model (yolo4/yolo5/mobilenet)
-- `--source`: Input source, could be video,webcam or realsense camera
+- `--source`: Input source (video path/webcam/realsense camera)
 - `--output`: Path for processed video output
 
 ## Model Files
