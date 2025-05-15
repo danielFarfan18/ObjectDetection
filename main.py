@@ -1,68 +1,96 @@
 """
 Object Detection Video Processing Script
-
-This script processes video files using different object detection models (YOLO4, YOLO5, MobileNet).
-It draws bounding boxes and labels around detected objects and saves the processed video.
+This script processes video from files, webcams or RealSense cameras using different object detection models.
 """
 
 import cv2
 import argparse
+import numpy as np
 from detectors import YOLO4Detector, YOLO5Detector, MobileNetDetector
 
-def process_video(detector, video_path, output_path):
+try:
+    import pyrealsense2 as rs
+    REALSENSE_AVAILABLE = True
+except ImportError:
+    REALSENSE_AVAILABLE = False
+
+def setup_realsense():
+    """Initialize and configure RealSense camera pipeline."""
+    if not REALSENSE_AVAILABLE:
+        raise ImportError("pyrealsense2 is not installed")
+    
+    pipeline = rs.pipeline()
+    config = rs.config()
+    config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
+    config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
+    pipeline.start(config)
+    align = rs.align(rs.stream.color)
+    return pipeline, align
+
+def process_video(detector, video_source, output_path, use_realsense=False):
     """
     Process video using the specified object detector.
 
     Args:
-        detector: Object detector instance (YOLO4, YOLO5, or MobileNet)
-        video_path (str): Path to input video file
-        output_path (str): Path to save processed video file
-
-    Raises:
-        Exception: If video file cannot be opened
+        detector: Object detector instance
+        video_source: Path to video file, camera index, or None for RealSense
+        output_path: Path to save processed video file
+        use_realsense: Boolean to indicate if RealSense camera should be used
     """
-    cap = cv2.VideoCapture(video_path)
-    if not cap.isOpened():
-        raise Exception("Could not open video file")
+    if use_realsense:
+        pipeline, align = setup_realsense()
+        # Get first frame to setup video writer
+        frames = pipeline.wait_for_frames()
+        color_frame = align.process(frames).get_color_frame()
+        frame = np.asanyarray(color_frame.get_data())
+        frame_height, frame_width = frame.shape[:2]
+    else:
+        # Regular video/webcam setup
+        cap = cv2.VideoCapture(video_source)
+        if not cap.isOpened():
+            raise Exception("Could not open video source")
+        frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        fps = int(cap.get(cv2.CAP_PROP_FPS))
 
-    # Get video properties for output
-    frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    fps = int(cap.get(cv2.CAP_PROP_FPS))
-    
+    # Initialize video writer
     out = cv2.VideoWriter(output_path,
                          cv2.VideoWriter_fourcc(*'mp4v'),
-                         fps,
+                         30 if use_realsense else fps,
                          (frame_width, frame_height))
 
     try:
-        while cap.isOpened():
-            ret, frame = cap.read()
-            if not ret:
-                break
+        while True:
+            if use_realsense:
+                frames = pipeline.wait_for_frames()
+                aligned_frames = align.process(frames)
+                depth_frame = aligned_frames.get_depth_frame()
+                color_frame = aligned_frames.get_color_frame()
+                frame = np.asanyarray(color_frame.get_data())
+            else:
+                ret, frame = cap.read()
+                if not ret:
+                    break
 
-            # Detect objects in the frame
+            # ... existing detection and drawing code ...
             boxes, confidences, class_ids, classes = detector.detect(frame)
-
-            # Apply Non-Maximum Suppression to remove overlapping boxes
             indices = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
             
-            # Draw boxes that survived NMS
             if len(indices) > 0:
                 for i in indices.flatten():
                     x, y, w, h = boxes[i]
                     conf = confidences[i]
                     class_id = class_ids[i]
                     
-                    # Only draw if confidence exceeds threshold
                     if conf > 0.5:
                         label = f"{classes[class_id]}: {conf:.2f}"
+                        if use_realsense:
+                            depth = depth_frame.get_distance(x + w//2, y + h//2)
+                            label += f" {depth:.2f}m"
                         
-                        # Draw bbox with shadow for better visibility
                         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 0), 4)
                         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                         
-                        # Add black background for text
                         (label_w, label_h), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 2)
                         cv2.rectangle(frame, (x, y - label_h - 10), (x + label_w, y), (0, 0, 0), -1)
                         cv2.putText(frame, label, (x, y - 5),
@@ -75,32 +103,26 @@ def process_video(detector, video_path, output_path):
                 break
 
     finally:
-        cap.release()
+        if use_realsense:
+            pipeline.stop()
+        else:
+            cap.release()
         out.release()
         cv2.destroyAllWindows()
 
 def main():
-    """
-    Main function that handles command line arguments and initializes the detection process.
-    
-    Supported detectors:
-    - YOLO4
-    - YOLO5
-    - MobileNet
-    """
-    # Set up command line arguments
     parser = argparse.ArgumentParser(description='Object detection with different models')
     parser.add_argument('--detector', type=str, default='yolo4',
                       choices=['yolo4', 'yolo5', 'mobilenet'],
-                      help='Type of detector to use (yolo4, yolo5, mobilenet)')
-    parser.add_argument('--video', type=str, default='av_revolucion.mp4',
-                      help='Path to video file')
+                      help='Type of detector to use')
+    parser.add_argument('--source', type=str, default='av_revolucion.mp4',
+                      help='Path to video file, camera index, or "realsense"')
     parser.add_argument('--output', type=str, default='output_detection.mp4',
                       help='Path to output file')
     
     args = parser.parse_args()
 
-    # Select detector based on argument
+    # ... existing detector setup code ...
     detectors = {
         'yolo4': YOLO4Detector,
         'yolo5': YOLO5Detector,
@@ -112,7 +134,12 @@ def main():
         raise ValueError(f"Invalid detector: {args.detector}")
     
     detector = detector_class()
-    process_video(detector, args.video, args.output)
+    
+    # Check if RealSense is requested
+    use_realsense = args.source.lower() == 'realsense'
+    video_source = None if use_realsense else args.source
+    
+    process_video(detector, video_source, args.output, use_realsense)
 
 if __name__ == "__main__":
     main()
