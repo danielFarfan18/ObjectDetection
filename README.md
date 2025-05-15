@@ -37,8 +37,8 @@ cd ObjectDetection
 
 2. Create a virtual environment (optional but recommended):
 ```bash
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
+python -m venv ObjectDetector
+source ObjectDetector/bin/activate 
 ```
 
 3. Install dependencies:
