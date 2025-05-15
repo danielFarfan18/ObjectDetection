@@ -31,8 +31,8 @@ requests  # for downloading model files
 
 1. Clone the repository:
 ```bash
-git clone <your-repo-url>
-cd <repo-directory>
+git clone [<your-repo-url>](https://github.com/danielFarfan18/ObjectDetection)
+cd ObjectDetection
 ```
 
 2. Create a virtual environment (optional but recommended):
