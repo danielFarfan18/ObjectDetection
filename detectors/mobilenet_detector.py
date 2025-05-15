@@ -10,7 +10,7 @@ class MobileNetDetector:
     and performing object detection on frames.
     """
 
-    def __init__(self, model_dir="mobilnet_model/ssd_mobilenet_v3_large_coco_2020_01_14/"):
+    def __init__(self, model_dir="models"):
         """
         Initialize the MobileNet detector.
 
@@ -33,7 +33,7 @@ class MobileNetDetector:
         """
         config_path = os.path.join(self.model_dir, "ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt")
         weights_path = os.path.join(self.model_dir, "frozen_inference_graph.pb")
-        classes_file = os.path.join(self.model_dir, "coco_classes.txt")
+        classes_file = os.path.join(self.model_dir, "classes.txt")
 
         # Check if all required files exist
         if not all(os.path.exists(f) for f in [config_path, weights_path, classes_file]):
