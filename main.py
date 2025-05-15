@@ -115,7 +115,7 @@ def main():
     parser.add_argument('--detector', type=str, default='yolo4',
                       choices=['yolo4', 'yolo5', 'mobilenet'],
                       help='Type of detector to use')
-    parser.add_argument('--source', type=str, default='av_revolucion.mp4',
+    parser.add_argument('--source', type=str, default='test_video.mp4',
                       help='Path to video file, camera index, or "realsense"')
     parser.add_argument('--output', type=str, default='output_detection.mp4',
                       help='Path to output file')
