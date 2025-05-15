@@ -70,26 +70,66 @@ pip install -r requirements.txt
 
 ## Usage
 
-The script can be run with different detectors using command line arguments:
+The script supports multiple video sources and detectors using command line arguments:
+
+### Video Sources
+
+```bash
+# Process video file
+python main.py --source path/to/video.mp4
+
+# Use webcam (index 0)
+python main.py --source 0
+
+# Use RealSense camera
+python main.py --source realsense
+```
+
+### Detectors
 
 ```bash
 # Using YOLOv4 (default)
-python main.py --video path/to/video.mp4
+python main.py --detector yolo4 --source video.mp4
 
 # Using YOLOv5
-python main.py --detector yolo5 --video path/to/video.mp4
+python main.py --detector yolo5 --source video.mp4
 
 # Using MobileNet
-python main.py --detector mobilenet --video path/to/video.mp4
-
-# Specifying output file
-python main.py --detector yolo4 --video input.mp4 --output result.mp4
+python main.py --detector mobilenet --source video.mp4
 ```
+
+### Output Options
+
+```bash
+# Save to specific output file
+python main.py --detector yolo4 --source input.mp4 --output result.mp4
+```
+
+### Full Examples
+
+```bash
+# Process video file with YOLOv4
+python main.py --detector yolo4 --source video.mp4 --output result.mp4
+
+# Use webcam with MobileNet
+python main.py --detector mobilenet --source 0 --output webcam_detection.mp4
+
+# Use RealSense camera with YOLOv5 (requires RealSense SDK)
+python main.py --detector yolo5 --source realsense --output depth_detection.mp4
+```
+
+Note: When using RealSense camera, make sure you have the RealSense SDK installed:
+
+```bash
+sudo apt-get install python3-pyrealsense2
+```
+
+The script will display the detection results in real-time and save the processed video to the specified output file.
 
 ### Command Line Arguments
 
 - `--detector`: Choose the detection model (yolo4/yolo5/mobilenet)
-- `--video`: Path to input video file
+- `--source`: Input source, could be video,webcam or realsense camera
 - `--output`: Path for processed video output
 
 ## Model Files
